@@ -7,20 +7,31 @@ package paymentsys;
  */
 
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 /**
  *
  * @author Wiktor
  */
 public class PaymentsystemPoland extends javax.swing.JFrame {
+   
     double PensjaPodstawowa;
     double DodDojazdowy;
     double PremiaProdukcyjna;
     double OplataZywieniowa;
     double LacznyPodatek;
     double SummPension;
+    
+    Connection con_emp_list = null;
+    PreparedStatement prepstat = null;
+    ResultSet resSet = null; 
+    
+    Connection con_user_data = null;
+    PreparedStatement pstmt = null;
     
     
     
@@ -35,6 +46,8 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
         Toolkit toolkit = getToolkit();
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
+        
+        this.fillCombo();
         
     }
     
@@ -83,6 +96,9 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
         jDisplayDateLBL = new javax.swing.JPanel();
         jPayDateLabel = new javax.swing.JLabel();
         jPayDateChooser = new com.toedter.calendar.JDateChooser();
+        jRegEmployeeCB = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
+        jDataSetBTN = new javax.swing.JButton();
         jSummedPanel = new javax.swing.JPanel();
         jTaxablePayLabel = new javax.swing.JLabel();
         jPensionablePayLabel = new javax.swing.JLabel();
@@ -176,7 +192,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jDodDojazLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jOpłŻywLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPremiaProdukcyjnaLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPremiaProdukcyjnaLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
                     .addComponent(jLNLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPensjaLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -187,23 +203,23 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                     .addComponent(jTxtPremProd)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel150, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLN150Txt, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel200)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(6, 6, 6)
                         .addComponent(jLN200Txt, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 13, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPensjaLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                    .addComponent(jTxtPensjaLBL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(10, 10, 10)
+                    .addComponent(jPensjaLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTxtPensjaLBL, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jDodDojazLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTxtDodDoj, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -211,20 +227,18 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOpłŻywLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTxtOpłŻyw, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPremiaProdukcyjnaLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTxtPremProd, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLNLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel150, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                        .addComponent(jLN150Txt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel200, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLN200Txt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(25, 25, 25))
+                    .addComponent(jTxtPremProd, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLNLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel150, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLN150Txt, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel200, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLN200Txt, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -352,25 +366,58 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
         jPayDateLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jPayDateLabel.setText("Data Przelewu:");
 
+        jPayDateChooser.setDateFormatString("yyyy MM dd");
+
+        jRegEmployeeCB.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jRegEmployeeCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRegEmployeeCBActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel2.setText("Lista Pracowników:");
+
+        jDataSetBTN.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jDataSetBTN.setText("Ustaw");
+        jDataSetBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDataSetBTNActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jDisplayDateLBLLayout = new javax.swing.GroupLayout(jDisplayDateLBL);
         jDisplayDateLBL.setLayout(jDisplayDateLBLLayout);
         jDisplayDateLBLLayout.setHorizontalGroup(
             jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDisplayDateLBLLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPayDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPayDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPayDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jDisplayDateLBLLayout.createSequentialGroup()
+                        .addComponent(jRegEmployeeCB, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jDataSetBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPayDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jDisplayDateLBLLayout.setVerticalGroup(
             jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDisplayDateLBLLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPayDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPayDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
-                .addGap(15, 15, 15))
+                .addContainerGap()
+                .addGroup(jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jRegEmployeeCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2))
+                    .addComponent(jDataSetBTN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jDisplayDateLBLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPayDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(jPayDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jSummedPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -407,12 +454,12 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
             .addGroup(jSummedPanelLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(jSummedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTaxablePayLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTaxPayLBL, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
+                    .addComponent(jTaxablePayLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                    .addComponent(jTaxPayLBL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jSummedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPensionablePayLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPensionPayLBL, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
+                    .addComponent(jPensionablePayLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                    .addComponent(jPensionPayLBL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(21, 21, 21))
         );
 
@@ -426,7 +473,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(83, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(76, 76, 76))
         );
@@ -473,7 +520,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboKP, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(jNIPaymentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jNIPaymentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTxtNrUbezpiecz, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -541,9 +588,14 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
 
         jPayReferenceBTN.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jPayReferenceBTN.setText("Wypłać");
+        jPayReferenceBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jPayReferenceBTNActionPerformed(evt);
+            }
+        });
 
         jNewPayjmentBTN.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jNewPayjmentBTN.setText("Nowa Płatność");
+        jNewPayjmentBTN.setText("Dodaj Pracownika");
         jNewPayjmentBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jNewPayjmentBTNActionPerformed(evt);
@@ -630,11 +682,11 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                     .addComponent(jPPit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSkładZdrowotna, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSkładChorobowa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSkładRent, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                    .addComponent(jSkladEmerytalna, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jSkładRent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSkladEmerytalna, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSkładEmerytLBL, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
+                    .addComponent(jSkładEmerytLBL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSkladRentLBL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSkladChorobowaLBL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSkladZdrowLBL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -719,17 +771,12 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jDisplayDateLBL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jSummedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSummedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jDisplayDateLBL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -744,19 +791,20 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDisplayDateLBL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(6, 6, 6)
+                            .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jDisplayDateLBL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jSummedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(jSummedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -765,12 +813,42 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(6, 6, 6))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    public void resetScript(){
+        jTxtImieNazwisko.setText(null);
+       jTxtNip.setText(null);
+       jTxtPracodawca.setText(null);
+       jTxtAdres.setText(null);
+       jTxtCountry.setText(null);
+       jTxtKodPocztowy.setText(null);
+       jTxtNrRef.setText(null);
+       jTxtPensjaLBL.setText(null);
+       jTxtDodDoj.setText(null);
+       jTxtOpłŻyw.setText(null);
+       jTxtNrUbezpiecz.setText(null);
+       jTxtAreaRec.setText(null);
+       jSkładEmerytLBL.setText(null);
+       jSkladRentLBL.setText(null);
+       jTaxPayLBL.setText(null);
+       jPensionPayLBL.setText(null);
+       jTxtTelephone.setText(null);
+       jTxtEmail.setText(null);
+       jTxtPremProd.setText(null);
+       jLN150Txt.setText(null);
+       jLN200Txt.setText(null);
+       jComboTU.setSelectedItem("1");
+       jComboKP.setSelectedItem("A0000");
+       jPayDateChooser.setDate(null);
+       jSkladChorobowaLBL.setText(null);
+       jSkladZdrowLBL.setText(null);
+       jPPitLBL.setText(null);
+    }
     
     private void wages(){
        
@@ -812,33 +890,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
     }//GEN-LAST:event_jExitBTNActionPerformed
 
     private void jResetBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jResetBTNActionPerformed
-       jTxtImieNazwisko.setText(null);
-       jTxtNip.setText(null);
-       jTxtPracodawca.setText(null);
-       jTxtAdres.setText(null);
-       jTxtCountry.setText(null);
-       jTxtKodPocztowy.setText(null);
-       jTxtNrRef.setText(null);
-       jTxtPensjaLBL.setText(null);
-       jTxtDodDoj.setText(null);
-       jTxtOpłŻyw.setText(null);
-       jTxtNrUbezpiecz.setText(null);
-       jTxtAreaRec.setText(null);
-       jSkładEmerytLBL.setText(null);
-       jSkladRentLBL.setText(null);
-       jTaxPayLBL.setText(null);
-       jPensionPayLBL.setText(null);
-       jTxtTelephone.setText(null);
-       jTxtEmail.setText(null);
-       jTxtPremProd.setText(null);
-       jLN150Txt.setText(null);
-       jLN200Txt.setText(null);
-       jComboTU.setSelectedItem("1");
-       jComboKP.setSelectedItem("A0000");
-       jPayDateChooser.setDate(null);
-       jSkladChorobowaLBL.setText(null);
-       jSkladZdrowLBL.setText(null);
-       jPPitLBL.setText(null);
+      this.resetScript();
                
     }//GEN-LAST:event_jResetBTNActionPerformed
 
@@ -1127,36 +1179,144 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jAddWagesBTNActionPerformed
 
+    @SuppressWarnings("deprecation")
     private void jNewPayjmentBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jNewPayjmentBTNActionPerformed
-       jTxtImieNazwisko.setText(null);
-       jTxtNip.setText(null);
-       jTxtPracodawca.setText(null);
-       jTxtAdres.setText(null);
-       jTxtCountry.setText(null);
-       jTxtKodPocztowy.setText(null);
-       jTxtNrRef.setText(null);
-       jTxtPensjaLBL.setText(null);
-       jTxtDodDoj.setText(null);
-       jTxtOpłŻyw.setText(null);
-       jTxtNrUbezpiecz.setText(null);
-       jTxtAreaRec.setText(null);
-       jSkładEmerytLBL.setText(null);
-       jSkladRentLBL.setText(null);
-       jTaxPayLBL.setText(null);
-       jPensionPayLBL.setText(null);
-       jTxtTelephone.setText(null);
-       jTxtEmail.setText(null);
-       jTxtPremProd.setText(null);
-       jLN150Txt.setText(null);
-       jLN200Txt.setText(null);
-       jComboTU.setSelectedItem("1");
-       jComboKP.setSelectedItem("A0000");
-       jPayDateChooser.setDate(null);
-       jSkladChorobowaLBL.setText(null);
-       jSkladZdrowLBL.setText(null);
-       jPPitLBL.setText(null);
+       this.resetScript();
+       
+       Employee_Registration_Poland erp = new Employee_Registration_Poland();
+        this.setVisible(false);
+       erp.setVisible(true);
     }//GEN-LAST:event_jNewPayjmentBTNActionPerformed
 
+    private void jRegEmployeeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRegEmployeeCBActionPerformed
+
+    }//GEN-LAST:event_jRegEmployeeCBActionPerformed
+
+    private void jDataSetBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDataSetBTNActionPerformed
+        String tmp = (String) jRegEmployeeCB.getSelectedItem();
+            String sql = "select * from emloyee_list_poland where prac_name = ?";
+            
+            
+        try{
+           
+            con_emp_list = DriverManager.getConnection("jdbc:mysql://localhost:3306/paymentsys", "root", "");
+            prepstat = con_emp_list.prepareStatement(sql);
+            prepstat.setString(1, tmp);
+            resSet = prepstat.executeQuery();
+            
+            if(resSet.next()){
+                
+                String empname = resSet.getString("prac_name");
+                jTxtImieNazwisko.setText(empname);
+                
+                String empaddress = resSet.getString("prac_address");
+                jTxtAdres.setText(empaddress);
+                
+                String empcountry = resSet.getString("prac_country");
+                jTxtCountry.setText(empcountry);
+                
+                String emppostal= resSet.getString("prac_postal_code");
+                jTxtKodPocztowy.setText(emppostal);
+                
+                String emprefno = resSet.getString("prac_ref_no");
+                jTxtNrRef.setText(emprefno);
+                
+                String empemployer = resSet.getString("prac_employer");
+                jTxtPracodawca.setText(empemployer);
+                
+                String empphone = resSet.getString("prac_phone_number");
+                jTxtTelephone.setText(empphone);
+                
+                String empemail = resSet.getString("prac_email");
+                jTxtEmail.setText(empemail);
+                
+            }
+        }
+        
+        catch(SQLException e){
+            
+            JOptionPane.showMessageDialog(null, e);
+            
+        }       
+    }//GEN-LAST:event_jDataSetBTNActionPerformed
+
+    private void jPayReferenceBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPayReferenceBTNActionPerformed
+        
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        
+        String name = jTxtImieNazwisko.getText();
+        String address = jTxtAdres.getText();
+        String country = jTxtCountry.getText();
+        String postal_code = jTxtKodPocztowy.getText();
+        String ref_no = jTxtNrRef.getText();
+        String employer_name = jTxtPracodawca.getText();
+        String phone_number = jTxtTelephone.getText();
+        String nip = jTxtNip.getText();
+        String email = jTxtEmail.getText();
+        String pension = jPensionPayLBL.getText();
+        String date = df.format(jPayDateChooser.getDate());
+        
+        
+        
+        try{
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con_user_data = DriverManager.getConnection("jdbc:mysql://localhost:3306/paymentsys", "root", "");
+            pstmt = con_user_data.prepareStatement("insert into user_data_pl values (?, ?, ? , ? , ?, ?, ?, ?, ?, ?, ?)");
+            
+            pstmt.setString(1, name);
+            pstmt.setString(2, address);
+            pstmt.setString(3, country);
+            pstmt.setString(4, postal_code);
+            pstmt.setString(5, ref_no);
+            pstmt.setString(6, employer_name);
+            pstmt.setString(7, phone_number);
+            pstmt.setString(8, nip);
+            pstmt.setString(9, email);
+            pstmt.setString(10, pension);
+            pstmt.setString(11, date);
+            
+            int i = pstmt.executeUpdate();
+            
+            if(i>0){
+                JOptionPane.showMessageDialog(null, "Data is Saved");
+            }
+            else{
+            JOptionPane.showMessageDialog(null, "Data is Not Saved");
+            }
+            
+            this.resetScript();
+            
+        }
+        catch(HeadlessException | ClassNotFoundException | SQLException e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }//GEN-LAST:event_jPayReferenceBTNActionPerformed
+
+    
+    private void fillCombo(){
+        
+        try{
+            
+            String sql = "select * from emloyee_list_poland";
+            con_emp_list = DriverManager.getConnection("jdbc:mysql://localhost:3306/paymentsys", "root", "");
+            prepstat = con_emp_list.prepareStatement(sql);
+            resSet = prepstat.executeQuery();
+            while(resSet.next()){
+               
+                String name = resSet.getString("prac_name");
+                jRegEmployeeCB.addItem(name);
+              
+             
+            }
+        }
+        
+        catch(SQLException e){
+            
+            JOptionPane.showMessageDialog(null, e);
+            
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -1200,6 +1360,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
     private javax.swing.JLabel jAdressLabel;
     private javax.swing.JComboBox<String> jComboKP;
     private javax.swing.JComboBox<String> jComboTU;
+    private javax.swing.JButton jDataSetBTN;
     private javax.swing.JPanel jDisplayDateLBL;
     private javax.swing.JLabel jDodDojazLbl;
     private javax.swing.JLabel jEmployeeNameLabel;
@@ -1212,6 +1373,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
     private javax.swing.JLabel jLNLbl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel150;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel200;
     private javax.swing.JLabel jNICodeLabel;
     private javax.swing.JLabel jNIPaymentLabel;
@@ -1237,6 +1399,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
     private javax.swing.JLabel jPostalLabel;
     private javax.swing.JLabel jPremiaProdukcyjnaLbl;
     private javax.swing.JLabel jRefNoLabel;
+    private javax.swing.JComboBox<String> jRegEmployeeCB;
     private javax.swing.JButton jResetBTN;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jSkladChorobowaLBL;
