@@ -69,6 +69,8 @@ public class Employee_Registration extends javax.swing.JFrame {
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
         
         
+        
+        
     }
 
     /**
@@ -237,7 +239,8 @@ public class Employee_Registration extends javax.swing.JFrame {
 
     @SuppressWarnings("deprecation")
     private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
-       Name.setText(null);
+      
+        Name.setText(null);
        Address.setText(null);
        Country.setText(null);
        Postal.setText(null);
