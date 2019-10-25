@@ -20,7 +20,18 @@ import javax.swing.JOptionPane;
  */
 public class Employee_Registration_Poland extends javax.swing.JFrame {
 
-    public void employee_regi(){
+    
+    
+    private void resetScript(){
+        Name.setText(null);
+       Address.setText(null);
+       Country.setText(null);
+       Postal.setText(null);
+       Refno.setText(null);
+       Employer.setText(null);
+       Phone.setText(null);
+    }
+    private void employee_regi(){
         
     
         Connection emp_regi = null;
@@ -68,10 +79,7 @@ public class Employee_Registration_Poland extends javax.swing.JFrame {
         Toolkit toolkit = getToolkit();
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
-        
-        
-        
-        
+       
     }
 
     /**
@@ -265,17 +273,8 @@ public class Employee_Registration_Poland extends javax.swing.JFrame {
     @SuppressWarnings("deprecation")
     private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
       
-        Name.setText(null);
-       Address.setText(null);
-       Country.setText(null);
-       Postal.setText(null);
-       Refno.setText(null);
-       Employer.setText(null);
-       Phone.setText(null);
+        this.resetScript();
       
-              
-       
-       
        PaymentsystemPoland paysyspol = new PaymentsystemPoland();
         
         paysyspol.setVisible(true);
@@ -288,13 +287,7 @@ public class Employee_Registration_Poland extends javax.swing.JFrame {
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void saveBtnKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_saveBtnKeyReleased
-       Name.setText(null);
-       Address.setText(null);
-       Country.setText(null);
-       Postal.setText(null);
-       Refno.setText(null);
-       Employer.setText(null);
-       Phone.setText(null);
+      this.resetScript();
     }//GEN-LAST:event_saveBtnKeyReleased
 
     private void EmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmailActionPerformed
