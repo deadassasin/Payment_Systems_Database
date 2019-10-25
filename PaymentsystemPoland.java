@@ -26,6 +26,9 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
     double LacznyPodatek;
     double SummPension;
     
+    double SkladkaEmerytalna, SkladkaRentowna, SkladkaChorobowa, SkladkaZdrowotna, PodatekPIT, SummarizedNad, Nad200, 
+                SumNad200, Nad150, SumNad150, CaZar;
+    
     Connection con_emp_list = null;
     PreparedStatement prepstat = null;
     ResultSet resSet = null; 
@@ -820,6 +823,67 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
+    
+    private void podatki(){
+        PensjaPodstawowa = Double.parseDouble(jTxtPensjaLBL.getText());
+          
+          PremiaProdukcyjna = Double.parseDouble(jTxtPremProd.getText());
+          
+          DodDojazdowy = Double.parseDouble(jTxtDodDoj.getText());
+          
+          OplataZywieniowa = Double.parseDouble(jTxtOpłŻyw.getText());
+        
+    
+          Nad150 = Double.parseDouble(jLN150Txt.getText());
+          
+          SumNad150 = ((PensjaPodstawowa % 160) * 1.5) * Nad150;
+          
+          Nad200 = Double.parseDouble(jLN200Txt.getText());
+          
+          SumNad200 = ((PensjaPodstawowa % 160) * 2) * Nad200;
+          
+          SummarizedNad = SumNad150 + SumNad200;
+          
+          CaZar = PensjaPodstawowa + SummarizedNad;
+          
+         
+          
+          SkladkaEmerytalna = CaZar * 0.0976; 
+          SkladkaRentowna = CaZar * 0.015;
+          SkladkaChorobowa = CaZar * 0.0245;
+          SkladkaZdrowotna = CaZar * 0.0777;
+          PodatekPIT = CaZar * 0.0723;
+          LacznyPodatek = SkladkaEmerytalna + SkladkaRentowna + SkladkaChorobowa + SkladkaZdrowotna + PodatekPIT;
+          SummPension = CaZar - LacznyPodatek + DodDojazdowy + PremiaProdukcyjna - OplataZywieniowa;
+    }
+    
+    
+    private void txtFill(){
+        
+        String SkEm = String.format("%.2f", SkladkaEmerytalna);  
+               jSkładEmerytLBL.setText(SkEm + "zł");
+               
+               String SkRen = String.format("%.2f", SkladkaRentowna);  
+               jSkladRentLBL.setText(SkRen + "zł");
+               
+               String SkChor = String.format("%.2f", SkladkaChorobowa);  
+               jSkladChorobowaLBL.setText(SkChor + "zł");
+               
+               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
+               jSkladZdrowLBL.setText(SkZdrow + "zł");
+               
+               String PodPIT = String.format("%.2f", PodatekPIT);  
+               jPPitLBL.setText(PodPIT + "zł");
+               
+               String SumPod = String.format("%.2f", LacznyPodatek);  
+               jTaxPayLBL.setText(SumPod + "zł");
+               
+               String SummarizedPension = String.format("%.2f", SummPension);
+               jPensionPayLBL.setText(SummarizedPension + "zł");
+        
+    }
+    
+    
     public void resetScript(){
         jTxtImieNazwisko.setText(null);
        jTxtNip.setText(null);
@@ -896,73 +960,16 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
 
     private void jAddWagesBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAddWagesBTNActionPerformed
         
-        
-        double SkladkaEmerytalna, SkladkaRentowna, SkladkaChorobowa, SkladkaZdrowotna, PodatekPIT, SummarizedNad, Nad200, 
-                SumNad200, Nad150, SumNad150, CaZar;
-        
-   
-        
           this.wages();
         
-    
-          
-          PensjaPodstawowa = Double.parseDouble(jTxtPensjaLBL.getText());
-          
-          PremiaProdukcyjna = Double.parseDouble(jTxtPremProd.getText());
-          
-          DodDojazdowy = Double.parseDouble(jTxtDodDoj.getText());
-          
-          OplataZywieniowa = Double.parseDouble(jTxtOpłŻyw.getText());
-        
-    
-          Nad150 = Double.parseDouble(jLN150Txt.getText());
-          
-          SumNad150 = ((PensjaPodstawowa % 160) * 1.5) * Nad150;
-          
-          Nad200 = Double.parseDouble(jLN200Txt.getText());
-          
-          SumNad200 = ((PensjaPodstawowa % 160) * 2) * Nad200;
-          
-          SummarizedNad = SumNad150 + SumNad200;
-          
-          CaZar = PensjaPodstawowa + SummarizedNad;
-          
-         
-          
-          SkladkaEmerytalna = CaZar * 0.0976; 
-          SkladkaRentowna = CaZar * 0.015;
-          SkladkaChorobowa = CaZar * 0.0245;
-          SkladkaZdrowotna = CaZar * 0.0777;
-          PodatekPIT = CaZar * 0.0723;
-          LacznyPodatek = SkladkaEmerytalna + SkladkaRentowna + SkladkaChorobowa + SkladkaZdrowotna + PodatekPIT;
-          SummPension = CaZar - LacznyPodatek + DodDojazdowy + PremiaProdukcyjna - OplataZywieniowa;
+          this.podatki();
           
       try{
        
             if(jComboKP.getSelectedItem().equals("A0000")){
                
-                
-                
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
                
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł");
+                this.txtFill();
                
               
                
@@ -970,177 +977,46 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
             
             else if(jComboKP.getSelectedItem().equals("A3000")){
                 
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
-               
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł");
+               this.txtFill();
                 
             }
             
             
              else if(jComboKP.getSelectedItem().equals("B4000")){
                 
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
+               this.txtFill();
                
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł"); 
+                
                 
             }
             
              else if(jComboKP.getSelectedItem().equals("C5000")){
                 
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
-               
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł");
+               this.txtFill();
                 
             }
             
              else if(jComboKP.getSelectedItem().equals("D6000")){
                 
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
-               
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł"); 
+               this.txtFill();
                 
             }
             
              else if(jComboKP.getSelectedItem().equals("E7000")){
                 
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
-               
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł"); 
+               this.txtFill(); 
                 
             }
             
              else if(jComboKP.getSelectedItem().equals("F8000")){
                 
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
-               
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł"); 
+               this.txtFill(); 
                 
             }
             
              else if(jComboKP.getSelectedItem().equals("G9000")){
                 
-               String SkEm = String.format("%.2f", SkladkaEmerytalna);  
-               jSkładEmerytLBL.setText(SkEm + "zł");
-               
-               String SkRen = String.format("%.2f", SkladkaRentowna);  
-               jSkladRentLBL.setText(SkRen + "zł");
-               
-               String SkChor = String.format("%.2f", SkladkaChorobowa);  
-               jSkladChorobowaLBL.setText(SkChor + "zł");
-               
-               String SkZdrow = String.format("%.2f", SkladkaZdrowotna);  
-               jSkladZdrowLBL.setText(SkZdrow + "zł");
-               
-               String PodPIT = String.format("%.2f", PodatekPIT);  
-               jPPitLBL.setText(PodPIT + "zł");
-               
-               String SumPod = String.format("%.2f", LacznyPodatek);  
-               jTaxPayLBL.setText(SumPod + "zł");
-               
-               String SummarizedPension = String.format("%.2f", SummPension);
-               jPensionPayLBL.setText(SummarizedPension + "zł"); 
+               this.txtFill();
                 
             }
            
@@ -1149,33 +1025,7 @@ public class PaymentsystemPoland extends javax.swing.JFrame {
         catch (NumberFormatException e){
             JOptionPane.showMessageDialog(null, "Enter a Valid Number", "Only Numbers", JOptionPane.INFORMATION_MESSAGE);
             
-            jTxtImieNazwisko.setText(null);
-            jTxtNip.setText(null);
-            jTxtPracodawca.setText(null);
-            jTxtAdres.setText(null);
-            jTxtCountry.setText(null);
-            jTxtKodPocztowy.setText(null);
-            jTxtNrRef.setText(null);
-            jTxtPensjaLBL.setText(null);
-            jTxtDodDoj.setText(null);
-            jTxtOpłŻyw.setText(null);
-            jTxtNrUbezpiecz.setText(null);
-            jTxtAreaRec.setText(null);
-            jSkładEmerytLBL.setText(null);
-            jSkladRentLBL.setText(null);
-            jTaxPayLBL.setText(null);
-            jPensionPayLBL.setText(null);
-            jTxtTelephone.setText(null);
-            jTxtEmail.setText(null);
-            jTxtPremProd.setText(null);
-            jLN150Txt.setText(null);
-            jLN200Txt.setText(null);
-            jComboTU.setSelectedItem("1");
-            jComboKP.setSelectedItem("A0000");
-            jPayDateChooser.setDate(null);
-            jSkladChorobowaLBL.setText(null);
-            jSkladZdrowLBL.setText(null);
-            jPPitLBL.setText(null);
+            this.resetScript();
         }
     }//GEN-LAST:event_jAddWagesBTNActionPerformed
 
