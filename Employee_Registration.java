@@ -240,13 +240,7 @@ public class Employee_Registration extends javax.swing.JFrame {
     @SuppressWarnings("deprecation")
     private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
       
-        Name.setText(null);
-       Address.setText(null);
-       Country.setText(null);
-       Postal.setText(null);
-       Refno.setText(null);
-       Employer.setText(null);
-       Phone.setText(null);
+       this.resetScript();
       
               
        this.hide();
@@ -263,15 +257,19 @@ public class Employee_Registration extends javax.swing.JFrame {
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void saveBtnKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_saveBtnKeyReleased
-       Name.setText(null);
+      this.resetScript();
+    }//GEN-LAST:event_saveBtnKeyReleased
+
+    
+    private void resetScript(){
+         Name.setText(null);
        Address.setText(null);
        Country.setText(null);
        Postal.setText(null);
        Refno.setText(null);
        Employer.setText(null);
        Phone.setText(null);
-    }//GEN-LAST:event_saveBtnKeyReleased
-
+    }
     /**
      * @param args the command line arguments
      */
