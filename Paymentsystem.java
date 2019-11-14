@@ -236,15 +236,13 @@ public class Paymentsystem extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jAdressLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jCountryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPostalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jEmployeeNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jAdressLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jCountryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPostalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jEmployeeNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRegEmployeeLBL))
                 .addGap(12, 12, 12)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1349,14 +1347,16 @@ public class Paymentsystem extends javax.swing.JFrame {
         String ni_payment = jTxtNIPayment.getText();
         String net_pay = jNetPayLBL.getText();
         String date = df.format(jPayDateChooser.getDate());
+        String comment = jTxtAreaRec.getText();
+        
         
         
         
         try{
             
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             con_user_data = DriverManager.getConnection("jdbc:mysql://localhost:3306/paymentsys", "root", "");
-            pstmt = con_user_data.prepareStatement("insert into user_data_uk values (?, ?, ? , ? , ?, ?, ?, ?, ?, ?)");
+            pstmt = con_user_data.prepareStatement("insert into user_data_uk values (?, ?, ? , ? , ?, ?, ?, ?, ?, ?, ?)");
             
             pstmt.setString(1, name);
             pstmt.setString(2, address);
@@ -1368,6 +1368,7 @@ public class Paymentsystem extends javax.swing.JFrame {
             pstmt.setString(8, ni_payment);
             pstmt.setString(9, net_pay);
             pstmt.setString(10, date);
+            pstmt.setString(11, comment);
             
             int i = pstmt.executeUpdate();
             
@@ -1415,22 +1416,7 @@ public class Paymentsystem extends javax.swing.JFrame {
             
         }
     }
-  
-//    private void updateCombo(){
-//        
-//        String sql = "Select * from employee_list";
-//        try{
-//            prepstat = con_emp_list.prepareStatement(sql);
-//            resSet = prepstat.executeQuery();
-//            
-//            while(resSet.next()){
-//                jRegEmployeeCB.addItem(resSet.getString("emp_name"));
-//            }
-//        }
-//        catch(SQLException e){
-//            JOptionPane.showMessageDialog(null, e);
-//        }
-//    }
+
     
     private void jRegEmployeeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRegEmployeeCBActionPerformed
         
